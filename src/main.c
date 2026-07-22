@@ -35,6 +35,8 @@ NNET* init_nn(int layers, int *layer_size) {
     MAT **bias_v = (MAT **)malloc(sizeof(MAT*) * layers);
     MAT **weights_m = (MAT **)malloc(sizeof(MAT*) * layers);
     MAT **error_v = (MAT **)malloc(sizeof(MAT*) * layers);
+    MAT **del_weights_m = (MAT **)malloc(sizeof(MAT*) * layers);
+    MAT **del_bias_v = (MAT **)malloc(sizeof(MAT*) * layers);
 
     // create matrices
     int prev = -1;
@@ -44,10 +46,14 @@ NNET* init_nn(int layers, int *layer_size) {
         if(prev == -1) {
             weights_m[i] = NULL;
             bias_v[i] = NULL;
+            del_bias_v[i] = NULL; 
+            del_weights_m[i] = NULL;
         }
         else {
             weights_m[i] = init_mat(layer_size[i], prev, 0);
             bias_v[i] = init_mat(layer_size[i], 1, 1);
+            del_bias_v[i] = init_mat(layer_size[i], 1, 1);
+            del_weights_m[i] = init_mat(layer_size[i], prev, 1);
         }
         prev = layer_size[i];
     }
@@ -73,6 +79,8 @@ NNET* init_nn(int layers, int *layer_size) {
     nn->bias_v = bias_v;
     nn->weights_m = weights_m;
     nn->error_v = error_v;
+    nn->del_weights_m = del_weights_m;
+    nn->del_bias_v = del_bias_v;
     return nn;
 }
 
@@ -82,11 +90,15 @@ void free_nn(NNET *nn) {
         free_mat(nn->weights_m[i]);
         free_mat(nn->bias_v[i]);
         free_mat(nn->error_v[i]);
+        free_mat(nn->del_bias_v[i]);
+        free_mat(nn->del_weights_m[i]);
     }
     free(nn->activations_v);
     free(nn->bias_v);
     free(nn->weights_m);
     free(nn->error_v);
+    free(nn->del_weights_m);
+    free(nn->del_bias_v);
     free(nn);
 }
 
@@ -125,6 +137,7 @@ FPROP_RES* fprop(NNET *nn) {
 
 void bprop(NNET *nn, int dataset_idx, MNIST_LAB *lab) {
     FPROP_RES *res = fprop(nn);
+    // do something with res
     free(res);
     int y = (int)lab->dataset[dataset_idx];  
     int idx_last_layer = nn->layers-1;
@@ -146,6 +159,15 @@ void bprop(NNET *nn, int dataset_idx, MNIST_LAB *lab) {
         free_mat(transpose);
         nn->error_v[i] = mul;
     }
+    // equation 3 and 4
+    for(int i=1;i<idx_last_layer;i++) {
+        for(int j=0;j<nn->del_bias_v[i]->row;j++) nn->del_bias_v[i]->m[j][0] += nn->error_v[i]->m[j][0];
+        MAT *mul = mat_mul(nn->error_v[i], nn->activations_v[i]);
+        MAT *add = mat_add(nn->del_weights_m[i], mul);
+        free_mat(mul);
+        free_mat(nn->del_weights_m[i]);
+        nn->del_weights_m[i] = add;
+    } 
 }
 
 
