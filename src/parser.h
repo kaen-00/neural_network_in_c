@@ -17,6 +17,9 @@ typedef struct {
     uint8_t *dataset;
 } MNIST_LAB;
 
+#define GET(ds, img, r, c) \
+    ((ds)->dataset[((size_t)(img) * (ds)->num_rows * (ds)->num_cols) + ((size_t)(r) * (ds)->num_cols) + (c)])
+
 MNIST_LAB* load_label_ds(char *fpath);
 MNIST_IMG* load_image_ds(char *fpath);
 

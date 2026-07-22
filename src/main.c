@@ -6,9 +6,6 @@
 #include "parser.h"
 #include "matrix.h"
 
-#define GET(ds, img, r, c) \
-    ((ds)->dataset[((size_t)(img) * (ds)->num_rows * (ds)->num_cols) + ((size_t)(r) * (ds)->num_cols) + (c)])
-
 typedef struct {
     int layers;
     int *layer_size;
