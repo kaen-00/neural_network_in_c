@@ -5,6 +5,7 @@
 #include <time.h>
 #include "parser.h"
 #include "matrix.h"
+#include "test.h"
 
 typedef struct {
     int layers;
@@ -197,21 +198,7 @@ void train_loop(int epoch, int batch_size, MNIST_IMG *imgset, MNIST_LAB *labset,
 }
 
 int main() {
-
-    char *train_img = "/home/kaen/Desktop/neuralNetwork/dataset/t10k-images.idx3-ubyte";
-    MNIST_IMG *img = load_image_ds(train_img);
-
-    printf("\n");
-    for(int i=0;i<28;i++) {
-        for(int j=0;j<28;j++) {
-            if(GET(img, 2, i, j) != 0) printf("1 ");
-            else printf("0 "); 
-        }
-        printf("\n");
-    }
-
-    char *train_lab = "/home/kaen/Desktop/neuralNetwork/dataset/t10k-labels.idx1-ubyte";
-    MNIST_LAB *lab = load_label_ds(train_lab);
-    printf("%d\n", lab->dataset[2]);
+    
+    test_matrices();
     return 0;
 }

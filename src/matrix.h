@@ -16,5 +16,6 @@ void mat_relu(MAT *m);
 void mat_softmax(MAT *m);
 MAT *mat_transpose(MAT *m);
 void mat_zero(MAT *m);
+void mat_print(MAT *c);
 
 #endif
