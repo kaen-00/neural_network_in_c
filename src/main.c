@@ -200,5 +200,6 @@ void train_loop(int epoch, int batch_size, MNIST_IMG *imgset, MNIST_LAB *labset,
 int main() {
     
     test_matrices();
+    test_parser();
     return 0;
 }
