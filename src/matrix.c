@@ -97,6 +97,7 @@ void mat_zero(MAT *m) {
 } 
 
 void mat_print(MAT *c) {
+    if(c == NULL) return;
     for(int i=0;i<c->row;i++) {
         for(int j=0;j<c->col;j++) printf("%f ", c->m[i][j]);
         printf("\n");
