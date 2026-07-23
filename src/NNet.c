@@ -1,4 +1,5 @@
 #include "NNet.h"
+#include "matrix.h"
 
 NNET* init_nn(int layers, int *layer_size) {
     NNET *nn = (NNET *)malloc(sizeof(NNET));
@@ -107,9 +108,7 @@ int fprop(NNET *nn) {
     return max_id;
 }
 
-void bprop(NNET *nn, int dataset_idx, MNIST_LAB *lab) {
-    // do something with res
-    int y = (int)lab->dataset[dataset_idx];  
+void bprop(NNET *nn, int y) {
     int idx_last_layer = nn->layers-1;
     int size_of_last_layer = nn->layer_size[idx_last_layer];
     // equation 1
@@ -120,19 +119,20 @@ void bprop(NNET *nn, int dataset_idx, MNIST_LAB *lab) {
     // equation 2 
     for(int i=idx_last_layer-1;i>0;i--) {
         MAT *transpose = mat_transpose(nn->weights_m[i+1]);
-        MAT *mul = mat_mul(transpose, nn->error_v[i]);
+        MAT *mul = mat_mul(transpose, nn->error_v[i+1]);
         for(int j=0;j<mul->row;j++) {
             if(nn->activations_v[i]->m[j][0] <= 0.0f) nn->error_v[i]->m[j][0] = 0.0f;
             else nn->error_v[i]->m[j][0] = mul->m[j][0];
         }
         free_mat(mul);
         free_mat(transpose);
-        nn->error_v[i] = mul;
     }
     // equation 3 and 4
-    for(int i=1;i<idx_last_layer;i++) {
+    for(int i=1;i<=idx_last_layer;i++) {
         for(int j=0;j<nn->del_bias_v[i]->row;j++) nn->del_bias_v[i]->m[j][0] += nn->error_v[i]->m[j][0];
-        MAT *mul = mat_mul(nn->error_v[i], nn->activations_v[i]);
+        MAT *trans = mat_transpose(nn->activations_v[i-1]);
+        MAT *mul = mat_mul(nn->error_v[i], trans);
+        free_mat(trans);
         MAT *add = mat_add(nn->del_weights_m[i], mul);
         free_mat(mul);
         free_mat(nn->del_weights_m[i]);

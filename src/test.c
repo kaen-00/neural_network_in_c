@@ -53,6 +53,25 @@ void test_matrices() {
     mat_softmax(a);
     mat_print(a);
     free_mat(a);
+
+
+    MAT *three_one = init_mat(3, 1, 1);
+    three_one->m[0][0] = 2;
+    three_one->m[1][0] = 1;
+    three_one->m[2][0] = 3;
+    printf("TRANSPOSE\n");
+    MAT *tr = mat_transpose(three_one);
+    mat_print(tr);
+    printf("+++++++++++++++++++++++\n");
+    MAT *one_two = init_mat(1, 2, 1);
+    one_two->m[0][0] = 1;
+    one_two->m[0][1] = 2;
+    MAT *res = mat_mul(three_one, one_two);
+    mat_print(three_one);
+    mat_print(one_two);
+    printf("3*1 x 1*2\n");
+    mat_print(res);
+
 }
 
 void test_parser() {
@@ -106,6 +125,21 @@ void test_NN_fprop() {
     nn->activations_v[0]->m[2][0] = 3;
     int class = fprop(nn);
     printf("predicted class\n: %d", class);
+    print_NN(nn);
+    free_nn(nn);
+}
+
+void test_NN_bprop() {
+    int arr[3] = {3, 2, 3};
+    NNET *nn = init_nn(3, arr);
+    nn->activations_v[0]->m[0][0] = 1;
+    nn->activations_v[0]->m[1][0] = 2;
+    nn->activations_v[0]->m[2][0] = 3;
+    int pred = fprop(nn);
+    print_NN(nn);
+    printf("BACKPROP BEGINS HERE=======================\n");
+    int y = 1;
+    bprop(nn, y);
     print_NN(nn);
     free_nn(nn);
 }

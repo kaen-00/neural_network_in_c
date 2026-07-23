@@ -81,7 +81,7 @@ void mat_softmax(MAT *m) {
 MAT *mat_transpose(MAT *m) {
     MAT *new = init_mat(m->col, m->row, 0);
     for(int i=0;i<m->row;i++) {
-        for(int j=i;j<m->col;j++) {
+        for(int j=0;j<m->col;j++) {
             new->m[j][i] = m->m[i][j];
         }
     }

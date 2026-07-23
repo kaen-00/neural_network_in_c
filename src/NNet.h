@@ -29,7 +29,7 @@ typedef struct {
 NNET* init_nn(int layers, int *layer_size);
 void free_nn(NNET *nn);
 int fprop(NNET *nn);
-void bprop(NNET *nn, int dataset_idx, MNIST_LAB *lab);
+void bprop(NNET *nn, int y);
 void feed_MNIST_input(MNIST_IMG *imgset, NNET *nn, int img_idx);
 void train_loop(int epoch, int batch_size, MNIST_IMG *imgset, MNIST_LAB *labset, NNET *x);
 void print_NN(NNET *nn);

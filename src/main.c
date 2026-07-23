@@ -10,6 +10,9 @@
 
 
 int main() {
-    test_NN_fprop();
+    //test_matrices();
+    test_NN_bprop();
     return 0;
 }
+
+
